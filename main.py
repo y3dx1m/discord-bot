@@ -27,10 +27,14 @@ async def on_message(message):
         return
     if client.user in message.mentions:
         question = message.content.replace(f'<@{client.user.id}>', '').strip()
-        response = groq_client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[{"role": "user", "content": question}]
-        )
-        await message.reply(response.choices[0].message.content)
+        try:
+            response = groq_client.chat.completions.create(
+                model="openai/gpt-oss-120b",
+                messages=[{"role": "user", "content": question}]
+            )
+            await message.reply(response.choices[0].message.content)
+        except Exception as e:
+            print(f"에러 발생: {e}")
+            await message.reply("죄송해요, 응답 생성 중 오류가 발생했어요 😢")
 
 client.run(os.environ['DISCORD_TOKEN'])
